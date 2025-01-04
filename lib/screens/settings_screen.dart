@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:seohyun_diary/services/diary_service.dart';
+import 'package:file_picker/file_picker.dart';
+import 'dart:io';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -98,6 +101,49 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
+  Future<void> _exportData() async {
+    try {
+      final success = await DiaryService.exportToSelectedLocation(context);
+      if (mounted) {
+        if (!success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('저장 권한이 필요합니다')),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('백업 중 오류가 발생했습니다')),
+        );
+      }
+    }
+  }
+
+  Future<void> _importData() async {
+    try {
+      final success = await DiaryService.restoreFromBackup();
+      if (mounted) {
+        if (success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('데이터가 복원되었습니다')),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('데이터 복원이 취소되었습니다')),
+          );
+        }
+      }
+    } catch (e) {
+      print('데이터 복원 실패: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('복원 중 오류가 발생했습니다')),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -134,6 +180,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   subtitle: Text(_isPasswordEnabled ? '비밀번호: $_currentPassword' : '비밀번호 없음'),
                   value: _isPasswordEnabled,
                   onChanged: _togglePassword,
+                ),
+                const Divider(),
+                ListTile(
+                  title: const Text('데이터 내보내기'),
+                  subtitle: const Text('일기 데이터를 파일로 저장'),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.folder_open),
+                      const SizedBox(width: 8),
+                      const Icon(Icons.file_download),
+                    ],
+                  ),
+                  onTap: () async {
+                    await _exportData();
+                  },
+                ),
+                ListTile(
+                  title: const Text('데이터 가져오기'),
+                  subtitle: const Text('저장된 데이터 파일에서 복원'),
+                  trailing: const Icon(Icons.file_upload),
+                  onTap: _importData,
                 ),
                 const Divider(),
                 const ListTile(

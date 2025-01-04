@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
+import 'package:seohyun_diary/models/diary_entry.dart';
+import 'package:seohyun_diary/services/diary_service.dart';
 
 class DiaryScreen extends StatefulWidget {
   final DateTime selectedDate;
@@ -23,20 +25,86 @@ class _DiaryScreenState extends State<DiaryScreen> {
   }
 
   Future<void> _loadDiary() async {
-    _prefs = await SharedPreferences.getInstance();
-    final key = DateFormat('yyyy-MM-dd').format(widget.selectedDate);
-    setState(() {
-      _controller.text = _prefs.getString(key) ?? '';
-    });
+    try {
+      final diaryData = await DiaryService.loadDiary();
+      final dateStr = DateFormat('yyyy-MM-dd').format(widget.selectedDate);
+      
+      final entry = diaryData.entries.firstWhere(
+        (e) => e.date == dateStr,
+        orElse: () => DiaryEntry(date: dateStr, content: ''),
+      );
+      
+      setState(() {
+        _controller.text = entry.content;
+      });
+    } catch (e) {
+      print('일기 로드 실패: $e');
+    }
   }
 
   Future<void> _saveDiary() async {
-    final key = DateFormat('yyyy-MM-dd').format(widget.selectedDate);
-    await _prefs.setString(key, _controller.text);
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('일기가 저장되었습니다')),
+    try {
+      if (_controller.text.trim().isEmpty) {
+        return; // 빈 내용은 저장하지 않음
+      }
+
+      // 현재 모든 일기 데이터 로드
+      final diaryData = await DiaryService.loadDiary();
+      final dateStr = DateFormat('yyyy-MM-dd').format(widget.selectedDate);
+      
+      // 현재 시간
+      final now = DateTime.now();
+      
+      // 기존 엔트리 찾기
+      final existingEntryIndex = diaryData.entries.indexWhere((e) => e.date == dateStr);
+      final entries = List<DiaryEntry>.from(diaryData.entries);
+
+      if (existingEntryIndex >= 0) {
+        // 기존 엔트리 업데이트
+        final existingEntry = entries[existingEntryIndex];
+        final updatedEntry = DiaryEntry(
+          id: existingEntry.id,
+          date: dateStr,
+          content: _controller.text.trim(),
+          createdAt: existingEntry.createdAt,
+          updatedAt: now,
+        );
+        entries[existingEntryIndex] = updatedEntry;
+      } else {
+        // 새 엔트리 추가
+        final newEntry = DiaryEntry(
+          id: now.millisecondsSinceEpoch.toString(),
+          date: dateStr,
+          content: _controller.text.trim(),
+          createdAt: now,
+          updatedAt: now,
+        );
+        entries.add(newEntry);
+      }
+      
+      // 전체 데이터 저장
+      final newDiaryData = DiaryData(
+        entries: entries,
+        version: '1.0.0',
+        appName: '서현이일기',
+        lastSync: now,
       );
+      
+      await DiaryService.saveDiary(newDiaryData);
+      print('일기 저장 완료: ${_controller.text}'); // 디버그용
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('일기가 저장되었습니다')),
+        );
+      }
+    } catch (e) {
+      print('일기 저장 실패: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('저장 중 오류가 발생했습니다')),
+        );
+      }
     }
   }
 

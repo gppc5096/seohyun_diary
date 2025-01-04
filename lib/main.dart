@@ -3,10 +3,16 @@ import 'package:seohyun_diary/screens/home_screen.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:seohyun_diary/screens/password_screen.dart';
+import 'package:seohyun_diary/services/background_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('ko_KR', null);
+  
+  // 백그라운드 서비스 초기화 및 스케줄링
+  await BackgroundService.initialize();
+  await BackgroundService.scheduleWeeklyBackup();
+  
   runApp(const MyApp());
 }
 

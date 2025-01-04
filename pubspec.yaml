@@ -40,6 +40,12 @@ dependencies:
   cupertino_icons: ^1.0.8
   table_calendar: ^3.0.9
   shared_preferences: ^2.2.2
+  path_provider: ^2.1.2
+  mailer: ^6.1.0
+  workmanager: ^0.5.2
+  file_picker: ^6.1.1
+  permission_handler: ^11.3.0
+  device_info_plus: ^9.1.2
 
 dev_dependencies:
   flutter_test:
