@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:seohyun_diary/services/diary_service.dart';
 import 'package:file_picker/file_picker.dart';
-import 'dart:io';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -104,12 +103,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _exportData() async {
     try {
       final success = await DiaryService.exportToSelectedLocation(context);
-      if (mounted) {
-        if (!success) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('저장 권한이 필요합니다')),
-          );
-        }
+      if (mounted && !success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('저장 권한이 필요합니다')),
+        );
       }
     } catch (e) {
       if (mounted) {
@@ -124,18 +121,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
     try {
       final success = await DiaryService.restoreFromBackup();
       if (mounted) {
-        if (success) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('데이터가 복원되었습니다')),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('데이터 복원이 취소되었습니다')),
-          );
-        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              success ? '데이터가 복원되었습니다' : '데이터 복원이 취소되었습니다'
+            ),
+          ),
+        );
       }
     } catch (e) {
-      print('데이터 복원 실패: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('복원 중 오류가 발생했습니다')),
@@ -147,28 +141,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(120),
-        child: SafeArea(
-          top: true,
-          minimum: const EdgeInsets.only(top: 20),
-          child: AppBar(
-            toolbarHeight: 120,
-            backgroundColor: Colors.white,
-            elevation: 0,
-            title: const Padding(
-              padding: EdgeInsets.only(top: 20),
-              child: Text(
-                '설정',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            centerTitle: true,
-          ),
-        ),
+      appBar: AppBar(
+        title: const Text('설정'),
+        centerTitle: true,
       ),
       body: Column(
         children: [
@@ -185,17 +160,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ListTile(
                   title: const Text('데이터 내보내기'),
                   subtitle: const Text('일기 데이터를 파일로 저장'),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.folder_open),
-                      const SizedBox(width: 8),
-                      const Icon(Icons.file_download),
-                    ],
-                  ),
-                  onTap: () async {
-                    await _exportData();
-                  },
+                  trailing: const Icon(Icons.file_download),
+                  onTap: _exportData,
                 ),
                 ListTile(
                   title: const Text('데이터 가져오기'),
@@ -206,33 +172,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 const Divider(),
                 const ListTile(
                   title: Text('버전 정보'),
-                  subtitle: Text('1.0.0'),
+                  subtitle: Text('2015.12.05'),
                 ),
                 const ListTile(
                   title: Text('개발자 정보'),
-                  subtitle: Text('서현이일기'),
+                  subtitle: Text('사랑하는 서현에게 주는 할아버지 선물'),
                 ),
               ],
             ),
           ),
-          // 푸터 위젯
           Container(
             padding: const EdgeInsets.symmetric(vertical: 16),
             decoration: BoxDecoration(
               color: Colors.blue.withOpacity(0.8),
               border: const Border(
-                top: BorderSide(
-                  color: Colors.blue,
-                  width: 0.5,
-                ),
+                top: BorderSide(color: Colors.blue, width: 0.5),
               ),
             ),
-            child: SizedBox(
+            child: const SizedBox(
               width: double.infinity,
               child: Column(
-                children: const [
+                children: [
                   Text(
-                    '서현아! 할아버지가 만들어준 일기장이란다.',
+                    '서현아! 매일 1가지씩 감사하는 말을 하고 살거라!',
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.white,
@@ -241,7 +203,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   SizedBox(height: 4),
                   Text(
-                    '© 2024 서현이일기. All rights reserved.',
+                    '© 2025 서현이일기. All rights reserved.',
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.black,

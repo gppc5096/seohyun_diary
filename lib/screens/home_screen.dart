@@ -25,6 +25,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     _animation = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1000),
+      debugLabel: null,
     )..repeat();
     _loadDiaryDates();
   }

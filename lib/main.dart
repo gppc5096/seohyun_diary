@@ -9,7 +9,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('ko_KR', null);
   
-  // 백그라운드 서비스 초기화 및 스케줄링
+  // 백그라운드 서비스 초기화
   await BackgroundService.initialize();
   await BackgroundService.scheduleWeeklyBackup();
   

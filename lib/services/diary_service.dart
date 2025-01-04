@@ -67,12 +67,29 @@ class DiaryService {
   static Future<void> createBackup() async {
     try {
       final diaryData = await loadDiary();
-      print('백업할 일기 수: ${diaryData.entries.length}');  // 디버그용
       
+      // 백업 데이터 구조 생성
+      final backupData = {
+        "settings": {
+          "theme": "light",
+          "fontSize": 14,
+        },
+        "userData": {
+          "lastBackup": DateTime.now().toIso8601String(),
+          "preferences": {
+            "notifications": true,
+          }
+        },
+        "diaryData": diaryData.toJson(),  // 일기 데이터도 포함
+      };
+
+      // 백업 파일 저장
       final backupFile = await _backupFile;
-      await backupFile.writeAsString(diaryData.toJsonString());
+      await backupFile.writeAsString(jsonEncode(backupData));
+      
+      print('백업 파일 생성 완료: ${backupFile.path}');
     } catch (e) {
-      print('백업 생성 실패: $e');  // 디버그용
+      print('백업 생성 실패: $e');
       rethrow;
     }
   }

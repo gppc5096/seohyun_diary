@@ -31,10 +31,11 @@ class BackgroundService {
       'weeklyBackup',
       'sendDiaryBackup',
       frequency: const Duration(days: 7),
+      initialDelay: _getInitialDelay(),
       constraints: Constraints(
         networkType: NetworkType.connected,
+        requiresBatteryNotLow: true,
       ),
-      initialDelay: _getInitialDelay(),
     );
   }
 
