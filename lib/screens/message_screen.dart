@@ -49,18 +49,56 @@ class _MessageScreenState extends State<MessageScreen> {
         centerTitle: true,
         backgroundColor: Colors.pink[100],
       ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Colors.pink[50]!,
-              Colors.white,
-            ],
+      body: Column(
+        children: [
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.pink[50]!,
+                    Colors.white,
+                  ],
+                ),
+              ),
+              child: _isMessageSent ? _buildSuccessView() : _buildMessageForm(),
+            ),
           ),
-        ),
-        child: _isMessageSent ? _buildSuccessView() : _buildMessageForm(),
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            decoration: BoxDecoration(
+              color: Colors.blue.withOpacity(0.8),
+              border: const Border(
+                top: BorderSide(color: Colors.blue, width: 0.5),
+              ),
+            ),
+            child: const SizedBox(
+              width: double.infinity,
+              child: Column(
+                children: [
+                  Text(
+                    '서현아! 매일 1가지씩 감사하는 말을 하고 살거라!',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    '© 2025 서현이일기. All rights reserved.',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.black,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
