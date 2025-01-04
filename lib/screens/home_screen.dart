@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:seohyun_diary/screens/diary_screen.dart';
 import 'package:seohyun_diary/screens/settings_screen.dart';
 import 'package:seohyun_diary/services/diary_service.dart';
+import 'package:seohyun_diary/screens/message_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -90,6 +91,22 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             ),
             centerTitle: true,
             actions: [
+              Padding(
+                padding: const EdgeInsets.only(right: 8.0, top: 20),
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.email,
+                    color: Colors.pink,
+                    size: 28,
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const MessageScreen()),
+                    );
+                  },
+                ),
+              ),
               Padding(
                 padding: const EdgeInsets.only(right: 16.0, top: 20),
                 child: IconButton(

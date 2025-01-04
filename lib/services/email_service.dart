@@ -45,4 +45,23 @@ class EmailService {
       rethrow;
     }
   }
+
+  static Future<void> sendMessage(String messageText) async {
+    try {
+      final now = DateTime.now();
+      final dateStr = '${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}';
+
+      final message = Message()
+        ..from = Address(_recipientEmail, '서현이일기')
+        ..recipients.add(_recipientEmail)
+        ..subject = '서현이가 보낸 메시지 ($dateStr)'
+        ..text = messageText;
+
+      final sendReport = await send(message, smtpServer);
+      print('메시지 전송 성공: ${sendReport.toString()}');
+    } catch (e) {
+      print('메시지 전송 실패: $e');
+      rethrow;
+    }
+  }
 } 
