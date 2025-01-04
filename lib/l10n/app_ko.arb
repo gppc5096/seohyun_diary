@@ -1,0 +1,8 @@
+{
+  "appTitle": "서현이일기",
+  "writeHint": "오늘의 일기를 작성해주세요",
+  "save": "저장",
+  "clear": "지우기",
+  "close": "닫기",
+  "savedMessage": "일기가 저장되었습니다"
+}
