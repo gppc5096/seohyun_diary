@@ -169,12 +169,12 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 shape: BoxShape.circle,
               ),
               todayTextStyle: TextStyle(
-                color: Colors.pink,
+                color: Colors.green,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
               todayDecoration: BoxDecoration(
-                color: Color.fromRGBO(233, 30, 99, 0.1),
+                color: Color.fromRGBO(76, 175, 80, 0.1),
                 shape: BoxShape.circle,
               ),
               outsideTextStyle: TextStyle(color: Colors.grey),
