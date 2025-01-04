@@ -233,7 +233,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               child: Column(
                 children: const [
                   Text(
-                    '서현아! 할아버지가 만들어준 일기장이란다.',
+                    '서현아! 매일 잠자기 전에 일기를 쓰면 좋을거야!.',
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.pink,
@@ -242,7 +242,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   ),
                   SizedBox(height: 4),
                   Text(
-                    '© 2024 서현이일기. All rights reserved.',
+                    '© 2025 서현이일기. All rights reserved.',
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.grey,
